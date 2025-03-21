@@ -4,5 +4,5 @@ docker-compose down
 # Build the Docker images
 docker-compose build
 
-# Start the Docker containers
+# Start the Docker containersa
 docker-compose up --build
