@@ -1,0 +1,17 @@
+{
+    "name": "mytheclipse/pw2",
+    "autoload": {
+        "psr-4": {
+            "Mytheclipse\\Pw2\\": "./"
+        }
+    },
+    "authors": [
+        {
+            "name": "MythEclipse",
+            "email": "asepharyanalm001@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
