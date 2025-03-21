@@ -11,7 +11,7 @@ $kodeAmbil = 1;
 
 header('Content-Type: application/json');
 
-$respons = ['message' => '', 'saldo' => $_SESSION['saldo']];
+$respons = ['message' => '', 'saldo' => $_SESSION['saldo'], 'success' => false];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     http_response_code(200);
@@ -23,13 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     if ($jumlah <= 0) {
         $respons['message'] = "Jumlah harus lebih dari 0";
-        $respons['saldo'] = $_SESSION['saldo'];
     } else {
         if ($jenisTransaksi === $kodeSetor) {
             $_SESSION['saldo'] += $jumlah;
             $respons['code'] = $kodeSetor;
             $respons['message'] = "Berhasil menyetor Rp. " . $jumlah . " - Saldo: Rp. " . $_SESSION['saldo'];
-            $respons['saldo'] = $_SESSION['saldo'];
+            $respons['success'] = true;
         } else if ($jenisTransaksi === $kodeAmbil) {
             if (($_SESSION['saldo'] - $jumlah) < $saldoMinimum) {
                 $respons['message'] = "Gagal mengambil uang. Saldo minimum harus Rp. " . $saldoMinimum . " - Saldo saat ini: Rp. " . $_SESSION['saldo'];
@@ -37,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 $_SESSION['saldo'] -= $jumlah;
                 $respons['code'] = $kodeAmbil;
                 $respons['message'] = "Berhasil mengambil Rp. " . $jumlah . " - Saldo: Rp. " . $_SESSION['saldo'];
-                $respons['saldo'] = $_SESSION['saldo'];
+                $respons['success'] = true;
             }
         } else {
             $respons['message'] = "Kode transaksi tidak valid";
-            $respons['saldo'] = $_SESSION['saldo'];
         }
     }
-    
+
+    $respons['saldo'] = $_SESSION['saldo'];
     echo json_encode($respons);
     exit;
 }
