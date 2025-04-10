@@ -11,7 +11,7 @@
     <form method="post" action="Posttest.php">
 
         <input type="number" name="nilai">
-        <input type="submit" name="tampil" value="TAMPILKAN Nilai">
+        <input type="submit" name="tampil" value="TAMPILKAN NILAI">
         <br>
         <?php
         extract($_POST);
