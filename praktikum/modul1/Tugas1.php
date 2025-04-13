@@ -4,27 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hitung Luas Lingkaran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Hitung Luas Lingkaran</h1>
-    <form method="post" action="">
-        <label for="radius">Masukkan Jari-jari:</label>
-        <input type="number" name="radius" id="radius" step="0.01" required>
-        <button type="submit">Hitung</button>
-    </form>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h1 class="text-center">Hitung Luas Lingkaran</h1>
+            </div>
+            <div class="card-body">
+                <form method="post" action="">
+                    <div class="mb-3">
+                        <label for="radius" class="form-label">Masukkan Jari-jari:</label>
+                        <input type="number" name="radius" id="radius" step="0.01" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Hitung</button>
+                </form>
+                <?php
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    define('PHI', 3.14); 
+                    $radius = $_POST['radius'];
 
-    <?php
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        define('PHI', 3.14); 
-        $radius = $_POST['radius'];
-
-        if (is_numeric($radius) && $radius > 0) {
-            $area = PHI * $radius * $radius;
-            echo "<p>Luas lingkaran dengan jari-jari $radius adalah: $area</p>";
-        } else {
-            echo "<p>Masukkan nilai jari-jari yang valid!</p>";
-        }
-    }
-    ?>
+                    if (is_numeric($radius) && $radius > 0) {
+                        $area = PHI * $radius * $radius;
+                        echo "<div class='alert alert-success mt-3'>Luas lingkaran dengan jari-jari $radius adalah: $area</div>";
+                    } else {
+                        echo "<div class='alert alert-danger mt-3'>Masukkan nilai jari-jari yang valid!</div>";
+                    }
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

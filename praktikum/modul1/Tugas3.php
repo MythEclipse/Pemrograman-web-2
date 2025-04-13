@@ -2,23 +2,35 @@
 <html>
 <head>
     <title>Hitung Nilai Akhir</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <form method="post" action="">
-        <label for="uas">Nilai UAS:</label>
-        <input type="text" name="uas" id="uas" required><br><br>
-
-        <label for="uts">Nilai UTS:</label>
-        <input type="text" name="uts" id="uts" required><br><br>
-
-        <label for="quiz">Nilai QUIZ:</label>
-        <input type="text" name="quiz" id="quiz" required><br><br>
-
-        <label for="tugas">Nilai TUGAS:</label>
-        <input type="text" name="tugas" id="tugas" required><br><br>
-
-        <input type="submit" name="submit" value="Hitung">
-    </form>
+<body class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3>Hitung Nilai Akhir</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" action="">
+                <div class="mb-3">
+                    <label for="uas" class="form-label">Nilai UAS:</label>
+                    <input type="text" name="uas" id="uas" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="uts" class="form-label">Nilai UTS:</label>
+                    <input type="text" name="uts" id="uts" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="quiz" class="form-label">Nilai QUIZ:</label>
+                    <input type="text" name="quiz" id="quiz" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="tugas" class="form-label">Nilai TUGAS:</label>
+                    <input type="text" name="tugas" id="tugas" class="form-control" required>
+                </div>
+                <button type="submit" name="submit" class="btn btn-primary">Hitung</button>
+            </form>
+        </div>
+    </div>
 
     <?php
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -43,10 +55,11 @@
             $HM = 'E';
         }
 
-        // Tampilkan hasil
-        echo "<h3>Hasil:</h3>";
+        echo '<div class="alert alert-info mt-3">';
+        echo "<h4>Hasil:</h4>";
         echo "Nilai Akhir Anda = $NA<br>";
         echo "Huruf Mutu = $HM";
+        echo '</div>';
     }
     ?>
 </body>
