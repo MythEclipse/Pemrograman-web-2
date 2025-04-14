@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.21
+# Configure nginx - http
 FROM alpine:${ALPINE_VERSION}
 
 # Setup document root
@@ -31,7 +31,7 @@ RUN apk add --no-cache \
 RUN ln -s /usr/bin/php84 /usr/bin/php
 
 # Configure nginx - http
-RUN echo 'user  nobody;\nworker_processes  1;\nerror_log  /var/log/nginx/error.log warn;\npid        /var/run/nginx.pid;\nevents {\n    worker_connections  1024;\n}\nhttp {\n    include       /etc/nginx/mime.types;\n    default_type  application/octet-stream;\n    sendfile        on;\n    keepalive_timeout  65;\n    server {\n        listen       80;\n        server_name  localhost;\n        root   /var/www/html;\n        index  index.php index.html index.htm;\n        location / {\n            try_files $uri $uri/ /index.php?$query_string;\n        }\n        location ~ \.php$ {\n            include fastcgi_params;\n            fastcgi_pass 127.0.0.1:9000;\n            fastcgi_index index.php;\n            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\n        }\n    }\n}' > /etc/nginx/nginx.conf
+RUN echo 'user  nobody;\nworker_processes  1;\nerror_log  /var/log/nginx/error.log warn;\npid        /var/run/nginx.pid;\nevents {\n    worker_connections  1024;\n}\nhttp {\n    include       /etc/nginx/mime.types;\n    default_type  application/octet-stream;\n    sendfile        on;\n    keepalive_timeout  65;\n    server {\n        listen       80;\n        server_name  localhost;\n        root   /var/www/html;\n        index  index.php index.html index.htm;\n        location / {\n            try_files $uri $uri/ /index.php?route=$uri&$args;\n        }\n        location ~ \.php$ {\n            include fastcgi_params;\n            fastcgi_pass 127.0.0.1:9000;\n            fastcgi_index index.php;\n            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\n        }\n    }\n}' > /etc/nginx/nginx.conf
 
 # Configure PHP-FPM
 ENV PHP_INI_DIR /etc/php84
@@ -44,11 +44,15 @@ RUN echo '[supervisord]\nnodaemon=true\n[program:nginx]\ncommand=/usr/sbin/nginx
 # Make sure files/folders needed by the processes are accessible when they run under the nobody user
 RUN chown -R nobody:nobody /var/www/html /run /var/lib/nginx /var/log/nginx
 
+# Copy project files to container
+COPY . /var/www/html/
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
 # Switch to use a non-root user from here on
 USER nobody
-
-# Add application
-COPY --chown=nobody src/ /var/www/html/
 
 # Expose the port nginx is reachable on
 EXPOSE 80
