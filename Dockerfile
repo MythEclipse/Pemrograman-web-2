@@ -22,11 +22,19 @@ RUN apk add --no-cache \
     php${PHP_VERSION}-tokenizer \
     php${PHP_VERSION}-fileinfo \
     php${PHP_VERSION}-curl \
-    php${PHP_VERSION}-dom && \
+    php${PHP_VERSION}-dom \
+    php${PHP_VERSION}-opcache && \
     ln -sf /usr/bin/php${PHP_VERSION} /usr/bin/php && \
     ln -sf /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm && \
     mkdir -p /run/nginx /var/log/php /var/log/supervisord ${APP_DIR} && \
     touch /var/log/php-fpm.log /var/log/php/php-errors.log /var/log/supervisord/supervisord.log
+
+# Enable JIT and OPcache
+RUN echo "opcache.enable=1" > ${PHP_INI_DIR}/conf.d/00-opcache.ini && \
+    echo "opcache.enable_cli=1" >> ${PHP_INI_DIR}/conf.d/00-opcache.ini && \
+    echo "opcache.jit=1255" >> ${PHP_INI_DIR}/conf.d/00-opcache.ini && \
+    echo "opcache.jit_buffer_size=100M" >> ${PHP_INI_DIR}/conf.d/00-opcache.ini && \
+    echo "opcache.save_comments=1" >> ${PHP_INI_DIR}/conf.d/00-opcache.ini
 
 # Config PHP-FPM
 RUN printf '[global]\nerror_log = /var/log/php-fpm.log\n[www]\nuser = nobody\ngroup = nobody\nlisten = 127.0.0.1:9000\npm = dynamic\npm.max_children = 5\npm.start_servers = 2\npm.min_spare_servers = 1\npm.max_spare_servers = 3\ncatch_workers_output = yes\n' > ${PHP_INI_DIR}/php-fpm.d/www.conf && \
