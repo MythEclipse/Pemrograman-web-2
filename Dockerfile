@@ -5,7 +5,7 @@ ENV PHP_VERSION=${PHP_VERSION}
 ENV APP_DIR=/var/www/html
 ENV PHP_INI_DIR=/etc/php${PHP_VERSION}
 
-# Install deps
+# Install dependencies
 RUN apk add --no-cache \
     nginx \
     supervisor \
@@ -36,20 +36,22 @@ RUN echo "opcache.enable=1" > ${PHP_INI_DIR}/conf.d/00-opcache.ini && \
     echo "opcache.jit_buffer_size=100M" >> ${PHP_INI_DIR}/conf.d/00-opcache.ini && \
     echo "opcache.save_comments=1" >> ${PHP_INI_DIR}/conf.d/00-opcache.ini
 
-# Config PHP-FPM
+# Configure PHP-FPM
 RUN printf '[global]\nerror_log = /var/log/php-fpm.log\n[www]\nuser = nobody\ngroup = nobody\nlisten = 127.0.0.1:9000\npm = dynamic\npm.max_children = 5\npm.start_servers = 2\npm.min_spare_servers = 1\npm.max_spare_servers = 3\ncatch_workers_output = yes\n' > ${PHP_INI_DIR}/php-fpm.d/www.conf && \
     printf 'display_errors = On\nlog_errors = On\nerror_log = /var/log/php/php-errors.log\n' > ${PHP_INI_DIR}/conf.d/docker.ini
 
-# Config nginx
-RUN printf 'user  nobody;\nworker_processes  1;\npid /run/nginx.pid;\nevents {\n  worker_connections  1024;\n}\nhttp {\n  include /etc/nginx/mime.types;\n  default_type application/octet-stream;\n  sendfile on;\n  keepalive_timeout  65;\n  server {\n    listen 80;\n    server_name localhost;\n    root /var/www/html;\n    index index.php index.html;\n    location / {\n      try_files $uri $uri/ /index.php?$query_string;\n    }\n    location ~ \\.php$ {\n      include fastcgi_params;\n      fastcgi_pass 127.0.0.1:9000;\n      fastcgi_index index.php;\n      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\n    }\n  }\n}' > /etc/nginx/nginx.conf
+# Configure nginx
+RUN printf 'user  nobody;\nworker_processes  1;\npid /run/nginx.pid;\nevents {\n  worker_connections  1024;\n}\nhttp {\n  include /etc/nginx/mime.types;\n  default_type application/octet-stream;\n  sendfile on;\n  keepalive_timeout  65;\n  server {\n    listen 80;\n    server_name localhost;\n    root /var/www/html;\n    index index.php index.html;\n    location / {\n      try_files $uri $uri/ /index.php?route=$uri&$query_string;\n    }\n    location ~ \\.php$ {\n      include fastcgi_params;\n      fastcgi_pass 127.0.0.1:9000;\n      fastcgi_index index.php;\n      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\n    }\n  }\n}' > /etc/nginx/nginx.conf
 
-# Config supervisor
+# Configure supervisor
 RUN printf '[supervisord]\nnodaemon=true\nlogfile=/var/log/supervisord/supervisord.log\n[program:nginx]\ncommand=/usr/sbin/nginx -g "daemon off;"\n[program:php-fpm]\ncommand=/usr/sbin/php-fpm --nodaemonize\n' > /etc/supervisord.conf
 
+# Copy your application code
 COPY . ${APP_DIR}
 
 WORKDIR ${APP_DIR}
 
 EXPOSE 80
 
+# Start supervisor to run nginx and php-fpm
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
