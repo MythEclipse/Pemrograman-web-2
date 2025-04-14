@@ -1,13 +1,16 @@
 FROM alpine:3.21.3@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c
-ARG PHP_VERSION=84
+
+ARG PHP_VERSION=8.4
 ARG PHP_INI_DIR=/etc/php84
 ARG APP_DIR=/var/www/html
-ENV PHP_VERSION=84 
-ENV PHP_INI_DIR=/etc/php84 
+
+ENV PHP_VERSION=8.4
+ENV PHP_INI_DIR=/etc/php84
 ENV APP_DIR=/var/www/html
 
 WORKDIR ${APP_DIR}
 
+# Install necessary packages including PHP and PHP-FPM
 RUN apk add --no-cache \
         curl \
         nginx \
@@ -51,6 +54,7 @@ RUN printf '[global]\nerror_log = /var/log/php-fpm.log\n[www]\nuser = www-data\n
 RUN printf '[supervisord]\nnodaemon=true\n[program:nginx]\ncommand=/usr/sbin/nginx -g "daemon off;"\n[program:php-fpm]\ncommand=/usr/sbin/php-fpm${PHP_VERSION} --nodaemonize\n' > /etc/supervisor/conf.d/supervisord.conf
 
 COPY . ${APP_DIR}
+
 # Ensure directory and log file have correct permissions
 RUN mkdir -p /var/www/html && \
     touch /var/www/html/supervisord.log && \
