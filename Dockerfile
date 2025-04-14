@@ -35,7 +35,7 @@ RUN apk add --no-cache \
     php${PHP_VERSION}-xmlwriter && \
     ln -sf /usr/bin/php${PHP_VERSION} /usr/bin/php && \
     ln -sf /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm && \
-    addgroup -S www-data && adduser -S -G www-data www-data && \
+    getent group www-data || addgroup -S www-data && adduser -S -G www-data www-data && \
     mkdir -p /etc/supervisor/conf.d \
              ${PHP_INI_DIR}/conf.d \
              ${PHP_INI_DIR}/php-fpm.d \
