@@ -31,20 +31,15 @@ RUN apk add --no-cache \
 RUN ln -s /usr/bin/php84 /usr/bin/php
 
 # Configure nginx - http
-COPY config/nginx.conf /etc/nginx/nginx.conf
-# Configure nginx - default server
-COPY config/conf.d /etc/nginx/conf.d/
-
-# Update nginx configuration to forward to port 80
-RUN sed -i 's/listen\s\+8080;/listen 80;/' /etc/nginx/conf.d/default.conf
+RUN echo 'user  nobody;\nworker_processes  1;\nerror_log  /var/log/nginx/error.log warn;\npid        /var/run/nginx.pid;\nevents {\n    worker_connections  1024;\n}\nhttp {\n    include       /etc/nginx/mime.types;\n    default_type  application/octet-stream;\n    sendfile        on;\n    keepalive_timeout  65;\n    server {\n        listen       80;\n        server_name  localhost;\n        root   /var/www/html;\n        index  index.php index.html index.htm;\n        location / {\n            try_files $uri $uri/ /index.php?$query_string;\n        }\n        location ~ \.php$ {\n            include fastcgi_params;\n            fastcgi_pass 127.0.0.1:9000;\n            fastcgi_index index.php;\n            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\n        }\n    }\n}' > /etc/nginx/nginx.conf
 
 # Configure PHP-FPM
 ENV PHP_INI_DIR /etc/php84
-COPY config/fpm-pool.conf ${PHP_INI_DIR}/php-fpm.d/www.conf
-COPY config/php.ini ${PHP_INI_DIR}/conf.d/custom.ini
+RUN echo '[global]\nerror_log = /var/log/php-fpm.log\n[www]\nuser = nobody\ngroup = nobody\nlisten = 127.0.0.1:9000\npm = dynamic\npm.max_children = 5\npm.start_servers = 2\npm.min_spare_servers = 1\npm.max_spare_servers = 3\n' > ${PHP_INI_DIR}/php-fpm.d/www.conf
+RUN echo 'display_errors = On\nlog_errors = On\nerror_log = /var/log/php-errors.log\n' > ${PHP_INI_DIR}/conf.d/custom.ini
 
 # Configure supervisord
-COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN echo '[supervisord]\nnodaemon=true\n[program:nginx]\ncommand=/usr/sbin/nginx -g "daemon off;"\n[program:php-fpm]\ncommand=/usr/sbin/php-fpm84 --nodaemonize\n' > /etc/supervisor/conf.d/supervisord.conf
 
 # Make sure files/folders needed by the processes are accessible when they run under the nobody user
 RUN chown -R nobody:nobody /var/www/html /run /var/lib/nginx /var/log/nginx
