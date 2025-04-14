@@ -48,7 +48,7 @@ RUN printf 'user  www-data;\nworker_processes  1;\nerror_log  /var/log/nginx/err
 RUN printf '[global]\nerror_log = /var/log/php-fpm.log\n[www]\nuser = www-data\ngroup = www-data\nlisten = 127.0.0.1:9000\npm = dynamic\npm.max_children = 5\npm.start_servers = 2\npm.min_spare_servers = 1\npm.max_spare_servers = 3\npm.status_path = /fpm-ping\n' > ${PHP_INI_DIR}/php-fpm.d/www.conf && \
     printf 'display_errors = On\nlog_errors = On\nerror_log = /var/log/php/php-errors.log\n' > ${PHP_INI_DIR}/conf.d/custom.ini
 
-RUN printf '[supervisord]\nnodaemon=true\n[program:nginx]\ncommand=/usr/sbin/nginx -g "daemon off;"\n[program:php-fpm]\ncommand=/usr/sbin/php-fpm --nodaemonize\n' > /etc/supervisor/conf.d/supervisord.conf
+RUN printf '[supervisord]\nnodaemon=true\nlogfile=/var/log/supervisord.log\n[program:nginx]\ncommand=/usr/sbin/nginx -g "daemon off;"\n[program:php-fpm]\ncommand=/usr/sbin/php-fpm84 --nodaemonize\n' > /etc/supervisor/conf.d/supervisord.conf
 
 COPY . ${APP_DIR}
 
