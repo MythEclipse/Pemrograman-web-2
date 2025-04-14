@@ -1,34 +1,65 @@
-FROM php:8.4-fpm-alpine3.18 AS base
+ARG ALPINE_VERSION=3.21
+FROM alpine:${ALPINE_VERSION}
 
-# Update Alpine packages to mitigate vulnerabilities
-RUN apk update && apk upgrade --no-cache
+# Setup document root
+WORKDIR /var/www/html
 
-FROM base
-
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
+# Install packages and remove default server definition
+RUN apk add --no-cache \
+    curl \
     nginx \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd mysqli pdo pdo_mysql
+    php84 \
+    php84-ctype \
+    php84-curl \
+    php84-dom \
+    php84-fileinfo \
+    php84-fpm \
+    php84-gd \
+    php84-intl \
+    php84-mbstring \
+    php84-mysqli \
+    php84-opcache \
+    php84-openssl \
+    php84-phar \
+    php84-session \
+    php84-tokenizer \
+    php84-xml \
+    php84-xmlreader \
+    php84-xmlwriter \
+    supervisor
 
-# Copy project files to container
-COPY . /var/www/html/
+RUN ln -s /usr/bin/php84 /usr/bin/php
 
-# Set working directory
-WORKDIR /var/www/html/
+# Configure nginx - http
+COPY config/nginx.conf /etc/nginx/nginx.conf
+# Configure nginx - default server
+COPY config/conf.d /etc/nginx/conf.d/
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+# Update nginx configuration to forward to port 80
+RUN sed -i 's/listen\s\+8080;/listen 80;/' /etc/nginx/conf.d/default.conf
 
-# Copy Nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# Configure PHP-FPM
+ENV PHP_INI_DIR /etc/php84
+COPY config/fpm-pool.conf ${PHP_INI_DIR}/php-fpm.d/www.conf
+COPY config/php.ini ${PHP_INI_DIR}/conf.d/custom.ini
 
-# Expose port 80
+# Configure supervisord
+COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Make sure files/folders needed by the processes are accessible when they run under the nobody user
+RUN chown -R nobody:nobody /var/www/html /run /var/lib/nginx /var/log/nginx
+
+# Switch to use a non-root user from here on
+USER nobody
+
+# Add application
+COPY --chown=nobody src/ /var/www/html/
+
+# Expose the port nginx is reachable on
 EXPOSE 80
 
-# Start Nginx and PHP-FPM
-CMD ["sh", "-c", "php-fpm & nginx -g 'daemon off;'"]
+# Let supervisord start nginx & php-fpm
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+# Configure a healthcheck to validate that everything is up & running
+HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:80/fpm-ping || exit 1
