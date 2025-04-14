@@ -6,7 +6,6 @@ ENV PHP_VERSION=84 \
 
 WORKDIR ${APP_DIR}
 
-# Install dependencies and setup environment
 RUN apk add --no-cache \
         curl \
         nginx \
@@ -30,6 +29,7 @@ RUN apk add --no-cache \
         php${PHP_VERSION}-xmlreader \
         php${PHP_VERSION}-xmlwriter && \
     ln -sf /usr/bin/php${PHP_VERSION} /usr/bin/php && \
+    addgroup -S www-data && adduser -S -G www-data www-data && \
     mkdir -p /etc/supervisor/conf.d \
              ${PHP_INI_DIR}/conf.d \
              ${PHP_INI_DIR}/php-fpm.d \
@@ -38,17 +38,16 @@ RUN apk add --no-cache \
              /var/log/nginx && \
     chown -R www-data:www-data ${APP_DIR} /run /var/log/nginx /var/log/php /var/lib/nginx
 
-# Configure nginx
+# Nginx config
 RUN printf 'user  www-data;\nworker_processes  1;\nerror_log  /var/log/nginx/error.log warn;\npid /run/nginx.pid;\nevents {\n    worker_connections  1024;\n}\nhttp {\n    include /etc/nginx/mime.types;\n    default_type application/octet-stream;\n    sendfile on;\n    keepalive_timeout  65;\n    server {\n        listen 80;\n        server_name localhost;\n        root %s;\n        index index.php index.html;\n        location / {\n            try_files $uri $uri/ /index.php?route=$uri&$args;\n        }\n        location ~ \\.php$ {\n            include fastcgi_params;\n            fastcgi_pass 127.0.0.1:9000;\n            fastcgi_index index.php;\n            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;\n        }\n    }\n}' "${APP_DIR}" > /etc/nginx/nginx.conf
 
-# Configure PHP-FPM
+# PHP-FPM config
 RUN printf '[global]\nerror_log = /var/log/php-fpm.log\n[www]\nuser = www-data\ngroup = www-data\nlisten = 127.0.0.1:9000\npm = dynamic\npm.max_children = 5\npm.start_servers = 2\npm.min_spare_servers = 1\npm.max_spare_servers = 3\n' > ${PHP_INI_DIR}/php-fpm.d/www.conf && \
     printf 'display_errors = On\nlog_errors = On\nerror_log = /var/log/php/php-errors.log\n' > ${PHP_INI_DIR}/conf.d/custom.ini
 
-# Configure supervisor
+# Supervisor config
 RUN printf '[supervisord]\nnodaemon=true\n[program:nginx]\ncommand=/usr/sbin/nginx -g "daemon off;"\n[program:php-fpm]\ncommand=/usr/sbin/php-fpm${PHP_VERSION} --nodaemonize\n' > /etc/supervisor/conf.d/supervisord.conf
 
-# Copy source code and set permission
 COPY . ${APP_DIR}
 RUN chown -R www-data:www-data ${APP_DIR} && chmod -R 755 ${APP_DIR}
 
