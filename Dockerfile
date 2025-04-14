@@ -52,6 +52,8 @@ RUN printf '[supervisord]\nnodaemon=true\n[program:nginx]\ncommand=/usr/sbin/ngi
 
 COPY . ${APP_DIR}
 RUN touch ${APP_DIR}/supervisord.log && \
+    chown www-data:www-data ${APP_DIR}/supervisord.log && \
+    chmod 664 ${APP_DIR}/supervisord.log && \
     chown -R www-data:www-data ${APP_DIR} && \
     chmod -R 755 ${APP_DIR}
 
