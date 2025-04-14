@@ -51,13 +51,12 @@ RUN printf '[global]\nerror_log = /var/log/php-fpm.log\n[www]\nuser = www-data\n
 RUN printf '[supervisord]\nnodaemon=true\n[program:nginx]\ncommand=/usr/sbin/nginx -g "daemon off;"\n[program:php-fpm]\ncommand=/usr/sbin/php-fpm${PHP_VERSION} --nodaemonize\n' > /etc/supervisor/conf.d/supervisord.conf
 
 COPY . ${APP_DIR}
+# Ensure directory and log file have correct permissions
 RUN mkdir -p ${APP_DIR} && \
     touch ${APP_DIR}/supervisord.log && \
     chown -R www-data:www-data ${APP_DIR} && \
-    chmod 777 ${APP_DIR}/supervisord.log && \
-    chmod -R 755 ${APP_DIR}
-
-
+    chmod -R 755 ${APP_DIR} && \
+    chmod 666 ${APP_DIR}/supervisord.log
 
 USER www-data
 
