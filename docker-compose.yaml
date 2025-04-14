@@ -17,7 +17,7 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
-    user: "www-data"  # Run as www-data to avoid running as root
+    user: "root" 
 
 networks:
   webnet:
