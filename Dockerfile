@@ -56,8 +56,7 @@ RUN printf '[supervisord]\nnodaemon=true\n[program:nginx]\ncommand=/usr/sbin/ngi
 COPY . ${APP_DIR}
 
 # Ensure directory and log file have correct permissions
-RUN mkdir -p /var/www/html && \
-    touch /var/www/html/supervisord.log && \
+RUN touch /var/www/html/supervisord.log && \
     chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html && \
     chmod 666 /var/www/html/supervisord.log
