@@ -52,11 +52,10 @@ RUN printf '[supervisord]\nnodaemon=true\nlogfile=/var/log/supervisord.log\n[pro
 
 COPY . ${APP_DIR}
 
-RUN touch /var/www/html/supervisord.log && \
-    chown -R www-data:www-data /var/www/html && \
-    find /var/www/html -type d -exec chmod 755 {} \; && \
-    find /var/www/html -type f -exec chmod 644 {} \; && \
-    chmod 664 /var/www/html/supervisord.log
+RUN touch /var/log/supervisord.log && \
+    chown www-data:www-data /var/log/supervisord.log && \
+    chmod 664 /var/log/supervisord.log
+
 
 
 USER www-data
