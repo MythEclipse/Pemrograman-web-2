@@ -54,8 +54,10 @@ COPY . ${APP_DIR}
 
 RUN touch /var/www/html/supervisord.log && \
     chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html && \
-    chmod 666 /var/www/html/supervisord.log
+    find /var/www/html -type d -exec chmod 755 {} \; && \
+    find /var/www/html -type f -exec chmod 644 {} \; && \
+    chmod 664 /var/www/html/supervisord.log
+
 
 USER www-data
 
