@@ -14,11 +14,12 @@ $kuadrat');
    return 1; 
    } 
  
+if (isset($submit)) {
    switch($submit){ 
-case "Tampilkan" : tampilAlert($pesan); break; 
-case "Kuadrat"   : print (kuadrat($bilangan)); 
-break; 
-   } 
+      case "Tampilkan" : tampilAlert($pesan); break; 
+      case "Kuadrat"   : print (kuadrat($bilangan)); break; 
+   }
+}
 ?> 
  
 <HTML> 
