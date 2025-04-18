@@ -10,3 +10,6 @@ echo "Kata[$i] = $kata[$i] <BR>";
 $gabung = implode(" ",$kata); 
 echo "<BR> Hasil Penggabungan = $gabung"; 
 ?> 
+
+
+
