@@ -8,4 +8,4 @@ Anda dapat melihat demo web ini di [pw2.asepharyana.cloud](http://pw2.asepharyan
 
 ## Deskripsi
 
-Repositori ini berisi kode sumber untuk mata kuliah Praktikum Pemrograman Web 2.
+Repositori ini berisi kode sumber untuk mata kuliah Praktikum Pemrograman Web 2a.
