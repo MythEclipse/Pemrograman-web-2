@@ -1,9 +1,26 @@
 <?php
 session_start();
 
+// Cek session atau cookie
 if (!isset($_SESSION['username'])) {
-    header("Location: /Tugas2");
-    exit;
+    // Jika tidak ada session, cek cookie
+    if (isset($_COOKIE['username']) && isset($_COOKIE['password'])) {
+        $valid_username = 'admin';
+        $valid_password = 'admin123';
+
+        if ($_COOKIE['username'] === $valid_username && $_COOKIE['password'] === $valid_password) {
+            // Set session dari cookie
+            $_SESSION['username'] = $_COOKIE['username'];
+        } else {
+            // Jika cookie tidak valid
+            header("Location: /Tugas2");
+            exit;
+        }
+    } else {
+        // Tidak ada session dan cookie
+        header("Location: /Tugas2");
+        exit;
+    }
 }
 ?>
 

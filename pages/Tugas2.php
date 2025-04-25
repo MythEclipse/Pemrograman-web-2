@@ -4,9 +4,19 @@ session_start();
 $valid_username = 'admin';
 $valid_password = 'admin123';
 
+// Jika sudah login via session
 if (isset($_SESSION['username'])) {
     header("Location: dashboard");
     exit;
+}
+
+// Jika belum login tapi ada cookie yang valid
+if (isset($_COOKIE['username']) && isset($_COOKIE['password'])) {
+    if ($_COOKIE['username'] === $valid_username && $_COOKIE['password'] === $valid_password) {
+        $_SESSION['username'] = $_COOKIE['username'];
+        header("Location: dashboard");
+        exit;
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,11 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $username;
 
         if ($remember) {
-            setcookie('username', $username, time() + (86400 * 7));
-            setcookie('password', $password, time() + (86400 * 7));
+            setcookie('username', $username, time() + (86400 * 7), '/');
+            setcookie('password', $password, time() + (86400 * 7), '/');
         } else {
-            setcookie('username', '', time() - 3600);
-            setcookie('password', '', time() - 3600);
+            setcookie('username', '', time() - 3600, '/');
+            setcookie('password', '', time() - 3600, '/');
         }
 
         header("Location: /dashboard");
@@ -66,13 +76,17 @@ $saved_password = $_COOKIE['password'] ?? '';
                 <label for="password" class="form-label">Password</label>
                 <input type="password" id="password" name="password" class="form-control" value="<?= htmlspecialchars($saved_password) ?>" required>
             </div>
+            <div class="form-check mb-3">
+                <input type="checkbox" name="remember" id="remember" class="form-check-input" <?= $saved_username ? 'checked' : '' ?>>
+                <label for="remember" class="form-check-label">Ingat saya</label>
+            </div>
             <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
     </div>
     <script>
         $(document).ready(function() {
             Swal.fire({
-                title: 'Login',
+                title: 'Login Info',
                 html: `<b>Username:</b> <?= htmlspecialchars($valid_username) ?><br><b>Password:</b> <?= htmlspecialchars($valid_password) ?>`,
                 icon: 'info',
                 confirmButtonText: 'OK'
