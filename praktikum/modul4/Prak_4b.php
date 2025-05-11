@@ -26,6 +26,30 @@
         else if ($menu == "simpan_buku") {
             include "simpan_buku.php";
         }
+        else if ($menu == "input_mahasiswa") {
+            include "input_mahasiswa.php";
+        }
+        else if ($menu == "tampil_mahasiswa") {
+            include "tampil_mahasiswa.php";
+        }
+        else if ($menu == "simpan_mahasiswa") {
+            include "simpan_mahasiswa.php";
+        }
+        else if ($menu == "tampil_data_buku") {
+            include "tampil_data_buku.php";
+        }
+        else if ($menu == "tampil_data_mahasiswa") {
+            include "tampil_data_mahasiswa.php";
+        }
+        else if ($menu == "input_peminjaman") {
+            include "input_peminjaman.php";
+        }
+        else if ($menu == "tampil_peminjaman") {
+            include "tampil_peminjaman.php";
+        }
+        else if ($menu == "simpan_peminjaman") {
+            include "simpan_peminjaman.php";
+        }
     }
     ?>
 </body>
