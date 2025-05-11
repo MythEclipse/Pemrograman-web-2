@@ -3,7 +3,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cari Judul Buku</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
         function tampilJudul(kode) {
             if (kode === "") {
@@ -23,26 +25,31 @@
     </script>
 </head>
 <body>
-    <h2>Data Buku</h2>
-    <table border="1" width="50%">
-        <tr>
-            <td><strong>Kode Buku</strong></td>
-            <td>
-                <select name="kode_buku" onchange="tampilJudul(this.value)">
-                    <option value="">-- Pilih Salah Satu --</option>
-                    <?php
-                    $q = mysqli_query($db, "SELECT kode_buku FROM buku");
-                    while ($row = mysqli_fetch_assoc($q)) {
-                        echo "<option value='{$row['kode_buku']}'>{$row['kode_buku']}</option>";
-                    }
-                    ?>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td><strong>Judul Buku</strong></td>
-            <td id="isi_judul">-</td>
-        </tr>
-    </table>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Data Buku</h2>
+        <div class="card">
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="kode_buku" class="form-label"><strong>Kode Buku</strong></label>
+                        <select id="kode_buku" name="kode_buku" class="form-select" onchange="tampilJudul(this.value)">
+                            <option value="">-- Pilih Salah Satu --</option>
+                            <?php
+                            $q = mysqli_query($db, "SELECT kode_buku FROM buku");
+                            while ($row = mysqli_fetch_assoc($q)) {
+                                echo "<option value='{$row['kode_buku']}'>{$row['kode_buku']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="isi_judul" class="form-label"><strong>Judul Buku</strong></label>
+                        <p id="isi_judul" class="form-control">-</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
