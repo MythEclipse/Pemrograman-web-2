@@ -20,4 +20,27 @@ if($submit == "SIMPAN") {
     }
 
 }
-?>F
+elseif ($submit =="UPDATE") {
+    include "koneksi.php";
+
+    $KD_BUKU   = $_POST['kode_buku'];
+    $JUDUL  = $_POST['judul_buku'];
+    $PWNGARANG   = $_POST['pengarang'];
+    $PENERBIT    = $_POST['penerbit'];
+
+    $q = "UPDATE buku SET
+          kode_buku = '$KD_BUKU',
+          judul_buku = '$JUDUL',
+          pengarang = '$PWNGARANG',
+          penerbit = '$PENERBIT'
+          WHERE KD_BUKU = $id_buku";
+    
+    $r = mysqli_query($db, $q) or die(mysqli_error($db));
+
+    if ($r) {
+        echo "<h2>Data Sudah diedit</h2>";
+    } else {
+        echo "<h2>Data tidak bisa</h2>";
+    }
+}
+?>

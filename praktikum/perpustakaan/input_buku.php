@@ -15,23 +15,24 @@
         <form action="Prak_4b.php?menu=simpan_buku" method="post" name="form1">
             <div class="mb-3">
                 <label for="kode_buku" class="form-label">Kode Buku</label>
-                <input type="text" class="form-control" id="kode_buku" name="kode_buku" maxlength="10" required>
+                <input type="text" class="form-control" id="kode_buku" name="kode_buku" value="<?php echo"$kode"?>" maxlength="10" required>
+                <input type="text" class="form-control" id="id_buku" name="id_buku" value="<?php echo"$kode"?>" hidden>
             </div>
             <div class="mb-3">
                 <label for="judul_buku" class="form-label">Judul Buku</label>
-                <input type="text" class="form-control" id="judul_buku" name="judul_buku" maxlength="30" required>
+                <input type="text" class="form-control" id="judul_buku" name="judul_buku" value="<?php echo"$judul"?>" maxlength="30" required>
             </div>
             <div class="mb-3">
                 <label for="pengarang" class="form-label">Pengarang</label>
-                <input type="text" class="form-control" id="pengarang" name="pengarang" maxlength="20" required>
+                <input type="text" class="form-control" id="pengarang" name="pengarang" value="<?php echo"$pengarang"?>" maxlength="20" required>
             </div>
             <div class="mb-3">
                 <label for="penerbit" class="form-label">Penerbit</label>
-                <input type="text" class="form-control" id="penerbit" name="penerbit" maxlength="20" required>
+                <input type="text" class="form-control" id="penerbit" name="penerbit" value="<?php echo"$penerbit"?>" maxlength="20"  required>
             </div>
             <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary" name="submit" value="SIMPAN" >Simpan</button>
-                <button type="reset" class="btn btn-secondary" name="reset" >Batal</button>
+                <input type="submit" class="btn btn-primary" name="submit" value="<?php echo"$tombol"?>" >Simpan</input>
+                <input type="reset" class="btn btn-secondary" name="reset" value="BATAL" >Batal</input>
             </div>
         </form>
     </div>

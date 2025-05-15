@@ -50,6 +50,13 @@
         else if ($menu == "simpan_peminjaman") {
             include "simpan_peminjaman.php";
         }
+        else if ($menu == "edit_buku") {
+            include "input_buku.php";
+        }
+        else if ($menu == "hapus_buku") {
+            include "aksi_buku.php";
+        }
+
     }
     ?>
 </body>
