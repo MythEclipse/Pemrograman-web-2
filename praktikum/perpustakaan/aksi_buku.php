@@ -10,7 +10,7 @@ if (isset($aksi))
     else if($aksi == "delete")
     {
         include "koneksi.php";
-        $q = "DELETE FROM buku WHERE KD_BUKU = $id";
+        $q = "DELETE FROM buku WHERE kode_buku = $id";
         $r = mysqli_query($db, $q) or die(mysqli_error($db));
         if ($r)
         {

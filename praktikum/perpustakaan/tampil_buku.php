@@ -12,7 +12,7 @@
 <body>
     <div class="container mt-5">
         <h2 class="text-center mb-4">DATA BUKU</h2>
-        <div class="table-responsive">4
+        <div class="table-responsive">
             <?php
             include "aksi_buku.php";
             ?>
@@ -34,8 +34,8 @@
                                 <td>{$data['judul_buku']}</td>
                                 <td>{$data['pengarang']}</td>
                                 <td>{$data['penerbit']}</td>
-                               <td><a href=Prak_4b.php?menu=edit_buku&aksi=edit&id=$data[KD_BUKU]>EDIT</a></td> 
-                               <td><a href=Prak_4b.php?menu=hapus_bukusaksi-delete&id=$data[KD_BUKU]>HAPUS</a></td>
+                               <td><a href=Prak_4b.php?menu=edit_buku&aksi=edit&id=$data[kode_buku]>EDIT</a></td> 
+                               <td><a href=Prak_4b.php?menu=hapus_buku&aksi=delete&id=$data[kode_buku]>HAPUS</a></td>
                             </tr>";
                     }
                     ?>
